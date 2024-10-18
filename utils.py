@@ -1,5 +1,6 @@
 import calendar
 
+
 def convert_members_to_dict(members):
     members_dict = {}
     for member in members:
@@ -105,9 +106,9 @@ def is_valid(solution, member, date, condition):
             return True
         
     # 한 주에 우선순위가 높은 학생(1, 2)이 이미 포함되어 있는 경우
-    if condition[member]['Priority'] == 1 or condition[member]['Priority'] == 2:
+    if condition[member]['Priority'] == 1:
         for sol in solution:
-            if condition[sol[0]]['Priority'] == 1 or condition[sol[0]]['Priority'] == 2:
+            if condition[sol[0]]['Priority'] == 1:
                 if sol[1][2] - 7 < date[2]:
                     return False
     

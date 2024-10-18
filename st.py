@@ -1,7 +1,8 @@
 import streamlit as st
 import calendar
 from utils import *
-
+from streamlit_calendar import calendar as cdar
+import pandas as pd
 st.set_page_config(layout="wide")
 
 # 상태 초기화 (멤버 리스트가 없다면 초기화)
@@ -13,6 +14,12 @@ if "last_month" not in st.session_state:
 
 if "no_date" not in st.session_state:
     st.session_state["no_date"] = []
+
+if "schedule_generated" not in st.session_state:
+    st.session_state["schedule_generated"] = False
+    
+if "button_clicked" not in st.session_state:
+    st.session_state["button_clicked"] = False
 
 # 해당 월의 일수를 계산
 def get_day_options(year, month):
@@ -146,11 +153,33 @@ if st.button("추가"):
     add_member()
     st.rerun()
 
-# 확인 버튼을 누르면 현재 멤버 리스트를 화면에 출력
+
+# 버튼 클릭 시 클릭 상태를 저장
 if st.button("시간표 생성"):
+    st.session_state["button_clicked"] = True
     members_dict = convert_members_to_dict(st.session_state["members"])
     calendar_info_list = generate_calendar_info(year, month, st.session_state["no_date"])
     sorted_names = sort_members_by_criteria(members_dict)
     solution = []
     backtracking(solution, sorted_names, 0, calendar_info_list, [], members_dict, len(members_dict))
-    st.write("현재 멤버 리스트:", solution)
+    
+    # 결과 상태 저장
+    st.session_state["solution"] = solution
+    
+    # 보기 좋은 형태로 출력하기 위해 데이터를 변환
+    formatted_solution = []
+    for entry in st.session_state["solution"]:
+        member_name = entry[0]
+        event_info = entry[1]
+        year, month, day, time_slot = event_info
+        formatted_solution.append({
+            "이름": member_name,
+            "연도": year,
+            "월": month,
+            "일": day,
+            "시간대": time_slot
+        })
+    
+    # DataFrame으로 변환하여 출력
+    df = pd.DataFrame(formatted_solution)
+    st.table(df)  # 테이블 형식으로 출력
