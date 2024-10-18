@@ -1,8 +1,8 @@
 import streamlit as st
 import calendar
 from utils import *
-from streamlit_calendar import calendar as cdar
 import pandas as pd
+
 st.set_page_config(layout="wide")
 
 # 상태 초기화 (멤버 리스트가 없다면 초기화)
